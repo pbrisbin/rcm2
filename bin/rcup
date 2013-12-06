@@ -1,0 +1,34 @@
+#!/bin/sh
+
+: ${RCM_LIB:="$(dirname "$0")"/../share/rcm}
+. $RCM_LIB/rcm.sh
+
+# Since POSIX cannot do process substitution, our while read loop has to
+# run in the subshell (as it's fed by lsrc), this means variables are
+# lexically scoped here and calling exit will not terminate the program.
+install_all() {
+  while IFS=':' read dst src sig; do
+    echo "mkdir -p $(dirname "$dst")"
+
+    # TODO: force/prompt when exists
+
+    case "$sig" in
+      '@') echo "ln -s $src -> $dst" ;;
+      'X') echo "cp $src -> $dst" ;;
+    esac
+  done
+}
+
+set_defaults
+
+# Commandline parsing...
+#
+# -f, force=1
+# -i, prompt=1
+# -k, hooks=1
+# -K, hooks=0
+# -v, -q, verbosity
+
+# Pass everything else as lsrc_options
+
+lsrc "$lsrc_options -F" | install_all

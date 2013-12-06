@@ -1,0 +1,21 @@
+#!/bin/sh
+
+: ${RCM_LIB:="$(dirname "$0")"/../share/rcm}
+. $RCM_LIB/rcm.sh
+
+set_defaults
+
+# Commandline parsing...
+#
+# -C, copy_always=1
+# -F, show_flags=1
+# -d, dotfiles_dirs+=...
+# -t, tags+=...
+# -I, inclusion_patterns+=...
+# -x, exclusion_patterns+=...
+# -v, -q, verbosity
+# files...
+
+for dotfiles_dir in "$dotfiles_dirs"; do
+  process "$dotfiles_dir"
+done
