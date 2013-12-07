@@ -3,32 +3,40 @@
 : ${RCM_LIB:="$(dirname "$0")"/../share/rcm}
 . $RCM_LIB/rcm.sh
 
-# Since POSIX cannot do process substitution, our while read loop has to
-# run in the subshell (as it's fed by lsrc), this means variables are
-# lexically scoped here and calling exit will not terminate the program.
-install_all() {
-  while IFS=':' read dst src sig; do
-    echo "mkdir -p $(dirname "$dst")"
+same_file() {
+  local src="$PWD/$1" dest="$2"
 
-    # TODO: force/prompt when exists
+  # Cases:
+  # correct symlink
+  # incorrect symlink
+  # file with same contents
+  # file with different contents
 
-    case "$sig" in
-      '@') echo "ln -s $src -> $dst" ;;
-      'X') echo "cp $src -> $dst" ;;
-    esac
-  done
+  true
 }
 
-set_defaults
+process_dotfile() {
+  local dotfile="$1"
+  local destination="$(destination "$dotfile")"
+  local directory="$(dirname "$destination")"
 
-# Commandline parsing...
-#
-# -f, force=1
-# -i, prompt=1
-# -k, hooks=1
-# -K, hooks=0
-# -v, -q, verbosity
+  if [ -e "$destination" ]; then
+    if same_file "$dotfile" "$destination"; then
+      debug "skipping $dotfile (exists and contents match)"
+      return 0
+    fi
+  fi
 
-# Pass everything else as lsrc_options
+  debug "installing $dotfile as $destination"
 
-lsrc "$lsrc_options -F" | install_all
+  if [ ! -d "$directory" ]; then
+    _mkdir "$directory"
+  fi
+
+  case "$(sigil "$dotfile")" in
+    '@') _ln -s "$dotfile" "$destination" ;;
+    'X') _cp "$dotfile" "$destination" ;;
+  esac
+}
+
+parse_options "$@" && process
