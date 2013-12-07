@@ -37,20 +37,20 @@ in_array() {
 # $2 where pattern is "(<source-glob>:)<filename-glob>"
 matches_pattern() {
   local file="$1" pattern="$2"
-  local directory_part file_pattern
+  local source_glob filename_glob
 
   if printf "$pattern" | grep -Fq ':'; then
-    directory_part="$(printf "$pattern" | sed 's|:.*$||')"
-    file_pattern="$(printf "$pattern" | sed 's|^.*:||')"
+    source_glob="$(printf "$pattern" | sed 's|:.*$||')"
+    filename_glob="$(printf "$pattern" | sed 's|^.*:||')"
   else
-    directory_part='*'
-    file_pattern="$2"
+    source_glob='*'
+    filename_glob="$2"
   fi
 
   case "$(basename "$dotfiles")" in
-    $directory_part)
+    $source_glob)
       case "$file" in
-        $file_pattern) return 0 ;;
+        $filename_glob) return 0 ;;
       esac
       ;;
   esac
@@ -167,7 +167,7 @@ install_dotfile() {
 
 # Recursively enter directory $1 and call process_dotfile with each
 # relative filename within. Note that process_dotfile is not currently
-# defined and calls should do so before using this function. Also note
+# defined and callers should do so before using this function. Also note
 # that it will be run in a subshell, changes to variables will not
 # persist and calls to exit will not terminate the script.
 dotfiles() {
