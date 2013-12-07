@@ -3,18 +3,6 @@
 : ${RCM_LIB:="$(dirname "$0")"/../share/rcm}
 . $RCM_LIB/rcm.sh
 
-same_file() {
-  local src="$PWD/$1" dest="$2"
-
-  # Cases:
-  # correct symlink
-  # incorrect symlink
-  # file with same contents
-  # file with different contents
-
-  true
-}
-
 process_dotfile() {
   local dotfile="$1"
   local destination="$(destination "$dotfile")"
@@ -24,19 +12,12 @@ process_dotfile() {
     if same_file "$dotfile" "$destination"; then
       debug "skipping $dotfile (exists and contents match)"
       return 0
+    else
+      : # TODO: force/prompt
     fi
   fi
 
-  debug "installing $dotfile as $destination"
-
-  if [ ! -d "$directory" ]; then
-    _mkdir "$directory"
-  fi
-
-  case "$(sigil "$dotfile")" in
-    '@') _ln -s "$dotfile" "$destination" ;;
-    'X') _cp "$dotfile" "$destination" ;;
-  esac
+  install_dotfile "$dotfile" "$destination"
 }
 
-parse_options "$@" && process
+parse_options "$@" && process_dotfiles

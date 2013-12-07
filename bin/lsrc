@@ -15,4 +15,4 @@ process_dotfile() {
   printf "\n"
 }
 
-parse_options "$@" && process
+parse_options "$@" && process_dotfiles
