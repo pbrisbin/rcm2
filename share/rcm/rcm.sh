@@ -37,6 +37,26 @@ debug() {
   fi
 }
 
+# Print usage for subcommand $1 with option string $2.
+generic_usage() {
+  local subcommand="$(basename "$0")"
+  local flags="${1:-[-FVqvh]}"
+  local options="${2:-[-I EXCL_PAT] [-x EXCL_PAT] [-t TAG] [-d DOT_DIR]}"
+
+  printf "Usage: %s %s %s\n" "$subcommand" "$flags" "$options"
+  printf "see %s(1) and rcm(5) for more details\n" "$subcommand"
+}
+
+# Print version for subcommand $1.
+generic_version() {
+  local subcommand="$(basename "$0")"
+
+  printf "%s (rcm) %s\n" "$subcommand" "$version"
+  printf "Copyright ...\n"
+  printf "License BSD: BSD 3-clause license\n\n"
+  printf "Written by...\n"
+}
+
 # Return true if string $1 is present in the space-separated "array" $2.
 in_array() { printf " $2 " | grep -Fq " $1 "; }
 
@@ -265,7 +285,7 @@ parse_options() {
 
   debug "options: $*"
 
-  while getopts Cd:t:I:x:qvFfikKoh opt; do
+  while getopts Cd:t:I:x:qvFfikKohV opt; do
     debug "option: $opt"
 
     case "$opt" in
@@ -283,6 +303,7 @@ parse_options() {
       K) hooks=0 ;;
       o) host_specific=1 ;;
       h) usage; return 1 ;;
+      V) version; return 1 ;;
     esac
   done
   shift $(($OPTIND-1))
@@ -303,6 +324,7 @@ parse_options() {
   debug "show_flags: $show_flags"
   debug "tags: $tags"
   debug "verbosity: $verbosity"
+  debug "version: $version"
   debug "files: $files"
   debug "---"
 
@@ -323,5 +345,6 @@ prompt=1
 show_flags=0
 tags=''
 verbosity=1
+version="0.0.1"
 
 . "${RCRC:-$HOME/.rcrc}"

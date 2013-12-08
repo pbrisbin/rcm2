@@ -2,10 +2,8 @@
 : ${RCM_LIB:=$(dirname "$0")/../share/rcm}
 . "$RCM_LIB"/rcm.sh
 
-usage() {
-  printf "Usage: mkrc [-hvqo] [-t TAG] [-d DIR] FILES ...\n"
-  printf "see mkrc(1) and rcm(5) for more details\n"
-}
+usage() { generic_usage '[-hvqo]' '[-t TAG] [-d DIR] FILES'; }
+version() { generic_version; }
 
 set_dotfiles_dir() {
   for dotfiles_dir in $dotfiles_dirs; do :; done
