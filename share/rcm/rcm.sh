@@ -280,6 +280,8 @@ parse_options() {
   debug "verbosity: $verbosity"
   debug "files: $files"
   debug "---"
+
+  return 0
 }
 
 copy_all=0
