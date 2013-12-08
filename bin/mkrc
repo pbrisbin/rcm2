@@ -1,21 +1,22 @@
 #!/bin/sh
 . "$(dirname "$0")"/../share/rcm/rcm.sh
 
-parse_options "$@" || exit 1
+set_dotfiles_dir() {
+  for dotfiles_dir in $dotfiles_dirs; do :; done
+  for tag in $tags; do :; done
 
-# For -d/-t, multiple arguments can be passed, we'll use the last
-for dotfiles_dir in $dotfiles_dirs; do :; done
-for tag in $tags; do :; done
+  if [ -n "$tag" ]; then
+    debug "installing tag-specifically"
+    dotfiles_dir="$dotfiles_dir/tag-$tag"
+  elif [ "$host_specific" -eq 1 ]; then
+    debug "installing host-specifically"
+    dotfiles_dir="$dotfiles_dir/host-${HOST:-$(hostname)}"
+  fi
+}
 
-if [ -n "$tag" ]; then
-  debug "installing tag-specifically"
-  dotfiles_dir="$dotfiles_dir/tag-$tag"
-elif [ "$host_specific" -eq 1 ]; then
-  debug "installing host-specifically"
-  dotfiles_dir="$dotfiles_dir/host-${HOST:-$(hostname)}"
-fi
+add_dotfile() {
+  local file="$1"
 
-for file in $files; do
   debug "adding $file to $dotfiles_dir"
 
   dotfile="$dotfiles_dir/$(printf "$file" | sed "s|^$HOME/\.||")"
@@ -26,4 +27,12 @@ for file in $files; do
   _mv "$file" "$dotfile"
 
   install_dotfile "$dotfile" "$file"
-done
+}
+
+if parse_options "$@"; then
+  set_dotfiles_dir
+
+  for file in $files; do
+    add_dotfile "$file"
+  done
+fi
