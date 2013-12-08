@@ -1,0 +1,33 @@
+#!/bin/sh
+
+: ${RCM_LIB:="$(dirname "$0")"/../share/rcm}
+. $RCM_LIB/rcm.sh
+
+set -- -vv ~/.config/cabal
+
+parse_options "$@" || exit 1
+
+# For -d/-t, multiple arguments can be passed, we'll use the last
+for dotfiles_dir in $dotfiles_dirs; do :; done
+for tag in $tags; do :; done
+
+if [ -n "$tag" ]; then
+  debug "installing tag-specifically"
+  dotfiles_dir="$dotfiles_dir/tag-$tag"
+elif [ "$host_specific" -eq 1 ]; then
+  debug "installing host-specifically"
+  dotfiles_dir="$dotfiles_dir/host-${HOST:-$(hostname)}"
+fi
+
+for file in $files; do
+  debug "adding $file to $dotfiles_dir"
+
+  dotfile="$dotfiles_dir/$(printf "$file" | sed "s|^$HOME/\.||")"
+  directory="$(dirname "$dotfile")"
+
+  [ ! -d "$directory" ] && _mkdir -p "$directory"
+
+  _mv "$file" "$dotfile"
+
+  install_dotfile "$dotfile" "$file"
+done

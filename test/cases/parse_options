@@ -9,6 +9,7 @@ parse_options
 [ -z "$exclusion_patterns" ] || "exclusion_patterns"
 [ "$force" -eq 0 ] || fail "force"
 [ "$hooks" -eq 1 ] || fail "hooks"
+[ "$host_specific" -eq 0 ] || fail "host_specific"
 [ -z "$inclusion_patterns" ] || "inclusion_patterns"
 [ "$prompt" -eq 1 ] || fail "prompt"
 [ "$show_flags" -eq 0 ] || fail "show_flags"
@@ -16,7 +17,7 @@ parse_options
 [ "$verbosity" -eq 1 ] || fail "verbosity"
 
 OPTIND=1 parse_options \
-  -C -F -f \
+  -C -F -f -o \
   -d foo -d bar \
   -t baz -t bat \
   -I pat1 -I pat2 \
@@ -25,6 +26,7 @@ OPTIND=1 parse_options \
 [ "$copy_all" -eq 1 ] || fail "copy_all with -C"
 [ "$show_flags" -eq 1 ] || fail "show_flags with -F"
 [ "$force" -eq 1 ] || fail "force with -f"
+[ "$host_specific" -eq 1 ] || fail "host_specific with -o"
 [ "$dotfiles_dirs" = "$HOME/.dotfiles foo bar" ] || fail "dotfiles_dirs with -d"
 [ "$tags" = ' baz bat' ] || fail "tags with -t"
 [ "$inclusion_patterns" = ' pat1 pat2' ] || fail "inclusion_patterns with -I"

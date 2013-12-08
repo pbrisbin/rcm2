@@ -14,9 +14,18 @@
 # source: http://apenwarr.ca/log/?m=201102#28.
 #
 ###
-_cp()    { echo "cp $*"; }    # TODO
-_ln()    { echo "ln $*"; }    # TODO
-_mkdir() { echo "mkdir $*"; } # TODO
+fs() {
+  local cmd="$1"; shift
+
+  [ "$verbosity" -ge 1 ] && echo "$cmd $*"
+
+  "$cmd" "$@"
+}
+
+_cp()    { fs 'cp'    "$@"; }
+_ln()    { fs 'ln'    "$@"; }
+_mkdir() { fs 'mkdir' "$@"; }
+_mv()    { fs 'mv'    "$@"; }
 
 # Print $* on STDERR if verbosity is high enough.
 debug() {
@@ -217,7 +226,7 @@ parse_options() {
 
   debug "options: $*"
 
-  while getopts Cd:t:I:x:qvFfikK opt; do
+  while getopts Cd:t:I:x:qvFfikKo opt; do
     debug "option: $opt"
 
     case "$opt" in
@@ -231,8 +240,9 @@ parse_options() {
       F) show_flags=1 ;;
       f) force=1 ;;
       i) prompt=1 ;;
-      k) debug "k"; hooks=1 ;;
-      K) debug "K"; hooks=0 ;;
+      k) hooks=1 ;;
+      K) hooks=0 ;;
+      o) host_specific=1 ;;
     esac
   done
   shift $(($OPTIND-1))
@@ -247,6 +257,7 @@ parse_options() {
   debug "exclusion_patterns: $exclusion_patterns"
   debug "force: $force"
   debug "hooks: $hooks"
+  debug "host_specific: $host_specific"
   debug "inclusion_patterns: $inclusion_patterns"
   debug "prompt: $prompt"
   debug "show_flags: $show_flags"
@@ -264,6 +275,7 @@ exclusion_patterns=''
 files=''
 force=0
 hooks=1
+host_specific=0
 inclusion_patterns=''
 prompt=1
 show_flags=0
