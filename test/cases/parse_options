@@ -4,11 +4,13 @@ parse_options
 
 [ "$copy_all" -eq 0 ] || fail "copy_all"
 [ -z "$copy_always" ] || fail "copy_always"
+[ "$dotfiles_dir" = "$HOME/.dotfiles" ] || fail "dotfiles_dir"
 [ "$dotfiles_dirs" = "$HOME/.dotfiles" ] || fail "dotfiles_dirs"
 [ -z "$excludes" ] || fail "excludes"
 [ -z "$exclusion_patterns" ] || "exclusion_patterns"
 [ "$force" -eq 0 ] || fail "force"
 [ "$hooks" -eq 1 ] || fail "hooks"
+[ "$hostname" = "$(hostname)" ] || fail "hostname"
 [ "$host_specific" -eq 0 ] || fail "host_specific"
 [ -z "$inclusion_patterns" ] || "inclusion_patterns"
 [ "$prompt" -eq 1 ] || fail "prompt"
@@ -27,10 +29,15 @@ OPTIND=1 parse_options \
 [ "$show_flags" -eq 1 ] || fail "show_flags with -F"
 [ "$force" -eq 1 ] || fail "force with -f"
 [ "$host_specific" -eq 1 ] || fail "host_specific with -o"
+[ "$dotfiles_dir" = "bar/tag-bat" ] || fail "dotfiles_dir with -d/-t"
 [ "$dotfiles_dirs" = "$HOME/.dotfiles foo bar" ] || fail "dotfiles_dirs with -d"
 [ "$tags" = ' baz bat' ] || fail "tags with -t"
 [ "$inclusion_patterns" = ' pat1 pat2' ] || fail "inclusion_patterns with -I"
 [ "$exclusion_patterns" = ' pat3 pat4' ] || fail "exclusion_patterns with -x"
+
+tags=""
+OPTIND=1 parse_options -o -d foo -d bar
+[ "$dotfiles_dir" = "bar/host-$(hostname)" ] || fail "dotfiles_dir with -d/-o"
 
 prompt=0
 OPTIND=1 parse_options -i
@@ -57,3 +64,9 @@ usage() { printf "usage: ..."; }
 output="$(OPTIND=1 parse_options -h)"
 [ $? -ne 0 ] || fail "-h sets return status"
 [ "$output" = "usage: ..." ] || fail "-h prints usage()"
+
+version() { printf "version: ..."; }
+
+output="$(OPTIND=1 parse_options -V)"
+[ $? -ne 0 ] || fail "-V sets return status"
+[ "$output" = "version: ..." ] || fail "-V prints version()"

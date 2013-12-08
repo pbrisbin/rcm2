@@ -252,7 +252,7 @@ dotfiles() {
 # For each source, call dotfiles on it, then any host-specific sub
 # folder, then any tag-specific sub folders.
 process_dotfiles() {
-  local direction="${1:-up}" hostname="${HOST:-$(hostname)}"
+  local direction="${1:-up}"
   local dotfile host_dotfile tag_dotfile
 
   for dotfiles in $dotfiles_dirs; do
@@ -281,7 +281,7 @@ process_dotfiles() {
 }
 
 parse_options() {
-  local opt file
+  local opt file tag
 
   debug "options: $*"
 
@@ -310,15 +310,28 @@ parse_options() {
 
   files="$*"
 
+  for dotfiles_dir in $dotfiles_dirs; do :; done
+
+  if [ -n "$tags" ]; then
+    for tag in $tags; do :; done
+    debug "additions will be tag-specific"
+    dotfiles_dir="$dotfiles_dir/tag-$tag"
+  elif [ "$host_specific" -eq 1 ]; then
+    debug "additions will be host-specific"
+    dotfiles_dir="$dotfiles_dir/host-$hostname"
+  fi
+
   debug "--- settings ---"
   debug "copy_all: $copy_all"
   debug "copy_always: $copy_always"
+  debug "dotfiles_dir: $dotfiles_dir"
   debug "dotfiles_dirs: $dotfiles_dirs"
   debug "excludes: $excludes"
   debug "exclusion_patterns: $exclusion_patterns"
   debug "force: $force"
   debug "hooks: $hooks"
   debug "host_specific: $host_specific"
+  debug "hostname: $hostname"
   debug "inclusion_patterns: $inclusion_patterns"
   debug "prompt: $prompt"
   debug "show_flags: $show_flags"
@@ -333,6 +346,7 @@ parse_options() {
 
 copy_all=0
 copy_always=''
+dotfiles_dir="$HOME/.dotfiles"
 dotfiles_dirs="$HOME/.dotfiles"
 excludes=''
 exclusion_patterns=''
@@ -340,6 +354,7 @@ files=''
 force=0
 hooks=1
 host_specific=0
+hostname="${HOST:-$(hostname)}"
 inclusion_patterns=''
 prompt=1
 show_flags=0

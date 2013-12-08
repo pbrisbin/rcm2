@@ -16,7 +16,7 @@ expected='bar-down;baz-down;'
 
 [ "$output" = "$expected" ] || fail "non-existent foo is skipped (down)"
 
-HOST='a-host'
+hostname='a-host'
 mkdir {bar,baz,bat}/{host-a-host,host-not-host}
 
 output="$(process_dotfiles)"
