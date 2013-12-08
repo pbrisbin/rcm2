@@ -6,20 +6,13 @@ usage() {
   printf "see rcup(1) and rcm(5) for more details\n"
 }
 
+
 process_dotfile() {
   local dotfile="$1"
   local destination="$(destination "$dotfile")"
-  local directory="$(dirname "$destination")"
 
   if [ -e "$destination" ]; then
-    if same_file "$dotfile" "$destination"; then
-      debug "skipping $dotfile (exists and contents match)"
-      return 0
-    else
-      # TODO: force/prompt
-      debug "$dotfile exists and is different"
-      return 1
-    fi
+    remove_dotfile "$dotfile" "$destination" || return 1
   fi
 
   install_dotfile "$dotfile" "$destination"

@@ -1,0 +1,17 @@
+# vim: ft=sh
+_rm() { echo "rm $*;"; }
+
+same_file() { false; }
+removable() { true; }
+
+output="$(remove_dotfile '' 'destination')"
+[ "$output" = "rm destination;" ] || fail "removable, not same"
+
+same_file() { true; }
+
+remove_dotfile '' '' && fail "same file is skipped"
+
+same_file() { false; }
+removable() { false; }
+
+remove_dotfile '' '' && fail "non-removable file is skipped"

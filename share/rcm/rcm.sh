@@ -137,6 +137,46 @@ copy() {
   [ "$copy_all" -eq 1 ] || in_array "$path" "$copy_always"
 }
 
+# Prompts user to remove existing file $1
+removable() {
+  local destination="$1" overwrite
+
+  [ "$force" -eq 1  ] && return 0
+  [ "$prompt" -ne 1 ] && return 1
+
+  printf "overwrite %s? [ynaq] " "$destination"
+  read overwrite
+
+  case "$overwrite" in
+    y) return 0 ;;
+
+    # Note: currently, since we run in a subshell, updating force won't
+    # work nor will calling exit...
+    a) force=1; return 0 ;;
+    q) exit 1 ;;
+  esac
+
+  return 1
+}
+
+# Removes destination $2 for dotfile $1 if possible. Returns false
+# otherwise.
+remove_dotfile() {
+  local dotfile="$1" destination="$2"
+
+  if same_file "$dotfile" "$destination"; then
+    debug "skipping $dotfile (exists and contents match)"
+    return 1
+  fi
+
+  if ! removable "$destination"; then
+    debug "skipping $dotfile (prompt setting)"
+    return 1
+  fi
+
+  _rm "$destination"
+}
+
 # Installs $1 into $2.
 install_dotfile() {
   local dotfile="$1" destination="$2"
@@ -188,7 +228,6 @@ dotfiles() {
     done
 
     run_hook "post-$direction"
-    cd - >/dev/null
   )
 }
 

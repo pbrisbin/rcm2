@@ -1,0 +1,25 @@
+# vim: ft=sh
+
+force=1
+removable 'foo' || fail "always true when forcing"
+force=0
+
+prompt=0
+removable 'foo' && fail "always false when prompt disabled"
+prompt=1
+
+echo 'y' | removable 'foo' >/dev/null || \
+  fail "true when user answers y"
+
+echo 'a' | {
+  removable 'foo' >/dev/null || fail "true when user answers a"
+  [ "$force" -eq 1 ] || fail "force set to 1 when user answers a"
+}
+
+echo 'q' | {
+  removable 'foo' >/dev/null
+  fail "exits when user answers q"
+} && fail "false when user answers q"
+
+echo 'x' | removable 'foo' >/dev/null && \
+  fail "false when user answers anything else"
