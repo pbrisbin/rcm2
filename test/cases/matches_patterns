@@ -1,0 +1,13 @@
+# vim: ft=sh
+patterns="foo:bar *:baz bat"
+
+dotfiles='foo'
+matches_patterns "bar" "$patterns" || fail "foo:bar matches"
+matches_patterns "baz" "$patterns" || fail "*:baz matches"
+matches_patterns "bat" "$patterns" || fail "bat maches"
+matches_patterns "quix" "$patterns" && fail "quix doesn't match"
+
+dotfiles='bar'
+matches_patterns "baz" "$patterns" || fail "*:baz matches"
+matches_patterns "bat" "$patterns" || fail "bat matches"
+matches_patterns "bar" "$patterns" && fail "foo:bar doesn't match"

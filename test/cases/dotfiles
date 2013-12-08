@@ -1,0 +1,30 @@
+# vim ft=sh
+
+mkdir -p foo/{bar,baz}/{bat,quix}
+
+touch foo/file_1
+touch foo/{bar,baz}/file_2
+touch foo/{bar,baz}/{bat,quix}/file_3
+
+process_dotfile() {
+  printf "pwd:%s|file:%s;" "$PWD" "$1"
+}
+
+expected=""
+expected="${expected}pwd:/tmp/foo/bar/bat|file:file_3;"
+expected="${expected}pwd:/tmp/foo/bar|file:file_2;"
+expected="${expected}pwd:/tmp/foo/bar/quix|file:file_3;"
+expected="${expected}pwd:/tmp/foo/baz/bat|file:file_3;"
+expected="${expected}pwd:/tmp/foo/baz|file:file_2;"
+expected="${expected}pwd:/tmp/foo/baz/quix|file:file_3;"
+expected="${expected}pwd:/tmp/foo|file:file_1;"
+
+output="$(dotfiles 'foo')"
+
+if [ "$output" != "$expected" ]; then
+  fail "unexpected output:
+    expected: $expected
+      actual: $output"
+fi
+
+rm -r foo

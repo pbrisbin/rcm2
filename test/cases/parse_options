@@ -1,0 +1,51 @@
+# vim: ft=sh
+
+parse_options
+
+[ "$copy_all" -eq 0 ] || fail "copy_all"
+[ -z "$copy_always" ] || fail "copy_always"
+[ "$dotfiles_dirs" = "$HOME/.dotfiles" ] || fail "dotfiles_dirs"
+[ -z "$excludes" ] || fail "excludes"
+[ -z "$exclusion_patterns" ] || "exclusion_patterns"
+[ "$force" -eq 0 ] || fail "force"
+[ "$hooks" -eq 1 ] || fail "hooks"
+[ -z "$inclusion_patterns" ] || "inclusion_patterns"
+[ "$prompt" -eq 1 ] || fail "prompt"
+[ "$show_flags" -eq 0 ] || fail "show_flags"
+[ -z "$tags" ] || fail "tags"
+[ "$verbosity" -eq 1 ] || fail "verbosity"
+
+OPTIND=1 parse_options \
+  -C -F -f \
+  -d foo -d bar \
+  -t baz -t bat \
+  -I pat1 -I pat2 \
+  -x pat3 -x pat4 \
+
+[ "$copy_all" -eq 1 ] || fail "copy_all with -C"
+[ "$show_flags" -eq 1 ] || fail "show_flags with -F"
+[ "$force" -eq 1 ] || fail "force with -f"
+[ "$dotfiles_dirs" = "$HOME/.dotfiles foo bar" ] || fail "dotfiles_dirs with -d"
+[ "$tags" = ' baz bat' ] || fail "tags with -t"
+[ "$inclusion_patterns" = ' pat1 pat2' ] || fail "inclusion_patterns with -I"
+[ "$exclusion_patterns" = ' pat3 pat4' ] || fail "exclusion_patterns with -x"
+
+prompt=0
+OPTIND=1 parse_options -i
+[ "$prompt" -eq 1 ] || fail "prompt with -i"
+
+OPTIND=1 parse_options -K
+[ "$hooks" -eq 0 ] || fail "no hooks with -K"
+
+hooks=0
+OPTIND=1 parse_options -k
+[ "$hooks" -eq 1 ] || fail "hooks with -k"
+
+OPTIND=1 parse_options -vvv 2>/dev/null
+[ "$verbosity" -eq 4 ] || fail "verbosity to 4 with -vvv"
+
+OPTIND=1 parse_options -q 2>/dev/null
+[ "$verbosity" -eq 0 ] || fail "verbosity to 0 with -q"
+
+OPTIND=1 parse_options foo bar baz
+[ "$files" = 'foo bar baz' ] || fail "file arguments"

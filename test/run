@@ -1,0 +1,42 @@
+#!/bin/sh
+runnable() {
+  local test_file="$1"
+  rcm_lib="$(dirname "$0")/../share/rcm/rcm.sh"
+
+  cat <<EOF
+. "$rcm_lib"
+
+ret=0
+
+fail() {
+  printf "  failure: %s\\n" "\$*"
+  ret=1
+}
+
+pending() {
+  printf "  pending: %s\\n" "\$*"
+  exit
+}
+
+cd /tmp
+$(cat "$test_file")
+exit \$ret
+EOF
+}
+
+cases=0
+errors=0
+
+for test_case in "$(dirname "$0")"/cases/*; do
+  cases=$(($cases+1))
+
+  printf "Test case: %s...\n" "$test_case"
+
+  if ! runnable "$test_case" | sh; then
+    errors=$(($errors+1))
+  fi
+done
+
+printf "\nFailures: %s/%s\n" "$errors" "$cases"
+
+exit $errors

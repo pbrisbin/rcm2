@@ -1,0 +1,15 @@
+# vim: ft=sh
+HOME='/home/jim'
+dotfiles="$HOME/.dotfiles"
+
+destination="$(PWD="$dotfiles" destination 'zsh')"
+[ "$destination" = "$HOME/.zsh" ] || fail "~/.zsh"
+
+destination="$(PWD="$dotfiles/nested" destination 'zsh')"
+[ "$destination" = "$HOME/.nested/zsh" ] || fail "~/.nested/zsh"
+
+destination="$(PWD="$dotfiles/host-foo" destination 'zsh')"
+[ "$destination" = "$HOME/.zsh" ] || fail "~/.zsh for host foo"
+
+destination="$(PWD="$dotfiles/tag-bar" destination 'zsh')"
+[ "$destination" = "$HOME/.zsh" ] || fail "~/.zsh for tag bar"

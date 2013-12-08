@@ -1,0 +1,23 @@
+# vim: ft=sh
+touch {file,hooks,host-foo,tag-bar}
+touch {excluded,excluded-p,included-p}
+
+skip 'non-existent' || fail "skip non-existent"
+
+skip file && fail "don't skip existing file"
+skip hooks || fail "skip hooks"
+skip host-foo || fail "skip host directory"
+skip tag-bar-foo || fail "skip tag directory"
+
+excludes='excluded'
+
+skip excluded || fail "skip excluded file"
+
+exclusion_patterns='excluded-p included-p'
+inclusion_patterns='included-p'
+
+skip excluded-p || fail "skip due to exclude pattern"
+skip included-p && fail "keep due to include pattern"
+
+rm {file,hooks,host-foo,tag-bar}
+rm {excluded,excluded-p,included-p}

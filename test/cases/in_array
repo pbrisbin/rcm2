@@ -1,0 +1,5 @@
+# vim: ft=sh
+in_array "element" "foo bar" && fail "element is not in foo bar"
+in_array "element" "foo element" || fail "element is in foo element"
+in_array "element" "element bar" || fail "element is in element bar"
+in_array "element" "foo element bar" || fail "element is in foo element bar"

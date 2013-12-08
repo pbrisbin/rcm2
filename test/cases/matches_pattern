@@ -1,0 +1,8 @@
+# vim: ft=sh
+dotfiles="/foo/bar/baz"
+
+matches_pattern "foo" "foo" || fail "foo ~ foo"
+matches_pattern "foo" "fo*" || fail "foo ~ fo*"
+matches_pattern "foo" "*:foo" || fail "foo ~ *:foo"
+matches_pattern "foo" "baz:foo" || fail "foo ~ baz:foo"
+matches_pattern "foo" "bar:foo" && fail "foo !~ bar:foo"
