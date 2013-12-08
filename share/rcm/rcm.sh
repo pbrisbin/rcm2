@@ -228,7 +228,7 @@ parse_options() {
 
   debug "options: $*"
 
-  while getopts Cd:t:I:x:qvFfikKo opt; do
+  while getopts Cd:t:I:x:qvFfikKoh opt; do
     debug "option: $opt"
 
     case "$opt" in
@@ -245,6 +245,7 @@ parse_options() {
       k) hooks=1 ;;
       K) hooks=0 ;;
       o) host_specific=1 ;;
+      h) usage; return 1 ;;
     esac
   done
   shift $(($OPTIND-1))

@@ -51,3 +51,9 @@ OPTIND=1 parse_options -q 2>/dev/null
 
 OPTIND=1 parse_options foo bar baz
 [ "$files" = 'foo bar baz' ] || fail "file arguments"
+
+usage() { printf "usage: ..."; }
+
+output="$(OPTIND=1 parse_options -h)"
+[ $? -ne 0 ] || fail "-h sets return status"
+[ "$output" = "usage: ..." ] || fail "-h prints usage()"
