@@ -1,12 +1,11 @@
 # vim: ft=sh
-mkdir -p foo/hooks
-echo 'echo pre-up ran' > foo/hooks/pre-up
+mkdir -p hooks
+echo 'echo pre-up ran' > hooks/pre-up
 
-dotfiles='foo'
 output="$(run_hook 'pre-up')"
 [ -z "$output" ] || fail "pre-up not executable"
 
-chmod +x foo/hooks/pre-up
+chmod +x hooks/pre-up
 
 output="$(run_hook 'pre-up')"
 [ "$output" = 'pre-up ran' ] || fail "pre-up is executable"
