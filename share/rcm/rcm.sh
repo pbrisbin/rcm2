@@ -137,11 +137,7 @@ destination() {
 copy() {
   local file="$1"
 
-  [ "$copy_all" -eq 1 ] && return 0
-
-  in_array "$file" "$copy_always" && return 0
-
-  return 1
+  [ "$copy_all" -eq 1 ] || in_array "$file" "$copy_always"
 }
 
 # Installs $1 into $2.
