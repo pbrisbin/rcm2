@@ -29,18 +29,13 @@ _mv()    { fs 'mv'    "$@"; }
 
 # Print $* on STDERR if verbosity is high enough.
 debug() {
-  [ "$verbosity" -ge 2 ] || return
-
-  printf "debug [%s]: %s\n" "$PWD" "$*" |\
-    sed "s|$HOME|~|g" >&2;
+  if [ "$verbosity" -ge 2 ]; then
+    printf "debug [%s]: %s\n" "$PWD" "$*" | sed "s|$HOME|~|g" >&2;
+  fi
 }
 
 # Return true if string $1 is present in the space-separated "array" $2.
-in_array() {
-  local needle="$1" haystack="$2"
-
-  printf " $haystack " | grep -Fq " $needle "
-}
+in_array() { printf " $2 " | grep -Fq " $1 "; }
 
 # Return true if the current source and base filename $1 match pattern
 # $2 where pattern is "(<source-glob>:)<filename-glob>"
@@ -67,14 +62,14 @@ matches_pattern() {
   return 1
 }
 
-# Returns true if match_pattern returns true for the given file and
+# Returns true if matches_pattern returns true for the given file and
 # any of the given patterns.
 matches_patterns() {
   local file="$1" patterns="$2"
 
   for pattern in $patterns; do
     if matches_pattern "$file" "$pattern"; then
-      debug "$file matches exclusion pattern $pattern"
+      debug "$file matches pattern $pattern"
       return 0
     fi
   done
@@ -86,9 +81,7 @@ is_excluded() { matches_patterns "$1" "$exclusion_patterns"; }
 is_included() { matches_patterns "$1" "$inclusion_patterns"; }
 
 # Return true if the base filename $1 and $2 have the same contents.
-same_file() {
-  diff -q -s "$PWD/$1" "$2" > /dev/null
-}
+same_file() { diff -q -s "$PWD/$1" "$2" >/dev/null; }
 
 # Return true if base filename $1 should be skipped. This may be because
 # it doesn't exist, is a meta directory, or should be excluded based on
@@ -134,11 +127,7 @@ destination() {
 
 # Return true if base filename $1 should be installed as a copy rather
 # than symlink.
-copy() {
-  local file="$1"
-
-  [ "$copy_all" -eq 1 ] || in_array "$file" "$copy_always"
-}
+copy() { [ "$copy_all" -eq 1 ] || in_array "$1" "$copy_always"; }
 
 # Installs $1 into $2.
 install_dotfile() {
