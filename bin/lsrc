@@ -15,4 +15,7 @@ process_dotfile() {
   printf "\n"
 }
 
-parse_options "$@" && process_dotfiles
+if parse_options "$@"; then
+  hooks=0
+  process_dotfiles
+fi
