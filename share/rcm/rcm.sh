@@ -17,7 +17,7 @@
 fs() {
   local cmd="$1"; shift
 
-  [ "$verbosity" -ge 1 ] && echo "$cmd $*"
+  [ "$verbosity" -ge 1 ] && printf "%s %s\n" "$cmd" "$*"
 
   "$cmd" "$@"
 }
