@@ -163,6 +163,17 @@ install_dotfile() {
   esac
 }
 
+# Runs hooks/$1 if present and executable
+run_hook() {
+  local hook="$1"
+
+  [ "$hooks" -ne 1 ] && return 0
+
+  if [ -x "$dotfiles/hooks/$hook" ]; then
+    "$dotfiles/hooks/$hook"
+  fi
+}
+
 # Recursively enter directory $1 and call process_dotfile with each
 # relative filename within. Note that process_dotfile is not currently
 # defined and callers should do so before using this function. Also note
@@ -201,6 +212,8 @@ process_dotfiles() {
 
     [ ! -d "$dotfiles" ] && continue
 
+    run_hook 'pre-up'
+
     dotfiles "$dotfiles"
 
     host_dotfiles="$dotfiles/host-$hostname"
@@ -218,6 +231,8 @@ process_dotfiles() {
         dotfiles "$tag_dotfiles"
       fi
     done
+
+    run_hook 'post-up'
   done
 }
 
