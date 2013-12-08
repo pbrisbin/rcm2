@@ -10,7 +10,7 @@ install:
 	install -D -m755 bin/mkrc $(DESTDIR)$(PREFIX)/bin/mkrc
 	install -D -m755 bin/lsrc $(DESTDIR)$(PREFIX)/bin/lsrc
 	install -D -m755 bin/rcup $(DESTDIR)$(PREFIX)/bin/rcup
-	install -D -m755 share/rcm/rcm.sh $(DESTDIR)$(PREFIX)/share/rcm/rcm.sh
+	install -D -m644 share/rcm/rcm.sh $(DESTDIR)$(PREFIX)/share/rcm/rcm.sh
 
 uninstall:
 	$(RM) -r \
