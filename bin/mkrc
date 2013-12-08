@@ -1,5 +1,6 @@
 #!/bin/sh
-. "$(dirname "$0")"/../share/rcm/rcm.sh
+: ${RCM_LIB:=$(dirname "$0")/../share/rcm}
+. "$RCM_LIB"/rcm.sh
 
 usage() {
   printf "Usage: mkrc [-hvqo] [-t TAG] [-d DIR] FILES ...\n"

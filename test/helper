@@ -1,3 +1,5 @@
 # vim: ft=sh
 RCRC=/dev/null
-. "$SRC_DIR/share/rcm/rcm.sh"
+RCM_LIB="$SRC_DIR/share/rcm"
+
+. "$RCM_LIB/rcm.sh"

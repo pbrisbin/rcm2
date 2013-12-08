@@ -1,5 +1,6 @@
 #!/bin/sh
-. "$(dirname "$0")"/../share/rcm/rcm.sh
+: ${RCM_LIB:=$(dirname "$0")/../share/rcm}
+. "$RCM_LIB"/rcm.sh
 
 usage() {
   printf "Usage: rcup [-CVqvfhikK] [-I EXCL_PAT] [-x EXCL_PAT] [-t TAG] [-d DOT_DIR]\n"

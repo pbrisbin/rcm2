@@ -14,6 +14,8 @@
 # source: http://apenwarr.ca/log/?m=201102#28.
 #
 ###
+. "$RCM_LIB/compat.sh"
+
 fs() {
   local cmd="$1"; shift
 
@@ -149,9 +151,6 @@ removable() {
 
   case "$overwrite" in
     y) return 0 ;;
-
-    # Note: currently, since we run in a subshell, updating force won't
-    # work nor will calling exit...
     a) force=1; return 0 ;;
     q) exit 1 ;;
   esac
@@ -205,30 +204,29 @@ run_hook() {
 
 # Recursively enter directory $1 and call process_dotfile with each
 # relative filename within. Note that process_dotfile is not currently
-# defined and callers should do so before using this function. Also note
-# that it will be run in a subshell, changes to variables will not
-# persist and calls to exit will not terminate the script.
+# defined and callers should do so before using this function.
 dotfiles() {
   local directory="$1" direction="${2:-up}" file
 
   debug "processing $directory"
 
-  (
-    cd "$directory"
-    run_hook "pre-$direction"
+  pushd "$directory"
 
-    for file in ${files:-*}; do
-      skip "$file" && continue
+  run_hook "pre-$direction"
 
-      if [ -d "$file" ]; then
-        dotfiles "$file" "$direction"
-      else
-        process_dotfile "$file"
-      fi
-    done
+  for file in ${files:-*}; do
+    skip "$file" && continue
 
-    run_hook "post-$direction"
-  )
+    if [ -d "$file" ]; then
+      dotfiles "$file" "$direction"
+    else
+      process_dotfile "$file"
+    fi
+  done
+
+  run_hook "post-$direction"
+
+  popd
 }
 
 # For each source, call dotfiles on it, then any host-specific sub
