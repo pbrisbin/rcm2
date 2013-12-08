@@ -161,25 +161,25 @@ run_hook() {
 # that it will be run in a subshell, changes to variables will not
 # persist and calls to exit will not terminate the script.
 dotfiles() {
-  local directory="$1" file
+  local directory="$1" direction="${2:-up}" file
 
   debug "processing $directory"
 
   (
     cd "$directory"
-    run_hook 'pre-up'
+    run_hook "pre-$direction"
 
     for file in ${files:-*}; do
       skip "$file" && continue
 
       if [ -d "$file" ]; then
-        dotfiles "$file"
+        dotfiles "$file" "$direction"
       else
         process_dotfile "$file"
       fi
     done
 
-    run_hook 'post-up'
+    run_hook "post-$direction"
     cd - >/dev/null
   )
 }
@@ -187,7 +187,7 @@ dotfiles() {
 # For each source, call dotfiles on it, then any host-specific sub
 # folder, then any tag-specific sub folders.
 process_dotfiles() {
-  local hostname="${HOST:-$(hostname)}"
+  local direction="${1:-up}" hostname="${HOST:-$(hostname)}"
   local dotfile host_dotfile tag_dotfile
 
   for dotfiles in $dotfiles_dirs; do
@@ -195,13 +195,13 @@ process_dotfiles() {
 
     [ ! -d "$dotfiles" ] && continue
 
-    dotfiles "$dotfiles"
+    dotfiles "$dotfiles" "$direction"
 
     host_dotfiles="$dotfiles/host-$hostname"
 
     if [ -d "$host_dotfiles" ]; then
       debug "for host $hostname"
-      dotfiles "$host_dotfiles"
+      dotfiles "$host_dotfiles" "$direction"
     fi
 
     for tag in $tags; do
@@ -209,7 +209,7 @@ process_dotfiles() {
 
       if [ -d "$tag_dotfiles" ]; then
         debug "for tag $tag"
-        dotfiles "$tag_dotfiles"
+        dotfiles "$tag_dotfiles" "$direction"
       fi
     done
   done

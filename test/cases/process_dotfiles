@@ -2,20 +2,25 @@
 
 mkdir {bar,baz,bat}
 
-dotfiles() { printf "%s;" "$1"; }
+dotfiles() { printf "%s-%s;" "$1" "$2"; }
 
 dotfiles_dirs='foo bar baz'
 
 output="$(process_dotfiles)"
-expected='bar;baz;'
+expected='bar-up;baz-up;'
 
 [ "$output" = "$expected" ] || fail "non-existent foo is skipped"
+
+output="$(process_dotfiles 'down')"
+expected='bar-down;baz-down;'
+
+[ "$output" = "$expected" ] || fail "non-existent foo is skipped (down)"
 
 HOST='a-host'
 mkdir {bar,baz,bat}/{host-a-host,host-not-host}
 
 output="$(process_dotfiles)"
-expected='bar;bar/host-a-host;baz;baz/host-a-host;'
+expected='bar-up;bar/host-a-host-up;baz-up;baz/host-a-host-up;'
 
 [ "$output" = "$expected" ] || fail "host-a-host is found in bar and baz"
 
@@ -24,6 +29,6 @@ mkdir {bar,baz,bat}/{tag-a-tag1,tag-a-tag2,tag-a-tag3}
 tags='a-tag1 a-tag2'
 
 output="$(process_dotfiles)"
-expected='bar;bar/host-a-host;bar/tag-a-tag1;bar/tag-a-tag2;baz;baz/host-a-host;baz/tag-a-tag1;baz/tag-a-tag2;'
+expected='bar-up;bar/host-a-host-up;bar/tag-a-tag1-up;bar/tag-a-tag2-up;baz-up;baz/host-a-host-up;baz/tag-a-tag1-up;baz/tag-a-tag2-up;'
 
 [ "$output" = "$expected" ] || fail "tag-a-tag{1,2} is found in bar and baz"

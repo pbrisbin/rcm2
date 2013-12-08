@@ -1,0 +1,21 @@
+# vim: ft=sh
+process_dotfile() { :; } # No-op
+
+mkdir -p foo/hooks
+echo 'echo "pre-up hook ran;"' > foo/hooks/pre-up
+echo 'echo "post-up hook ran;"' > foo/hooks/post-up
+echo 'echo "pre-down hook ran;"' > foo/hooks/pre-down
+echo 'echo "post-down hook ran;"' > foo/hooks/post-down
+chmod +x foo/hooks/{pre,post}-{up,down}
+
+output="$(dotfiles 'foo')"
+expected="pre-up hook ran;
+post-up hook ran;"
+
+[ "$output" = "$expected" ] || fail "up hooks"
+
+output="$(dotfiles 'foo' 'down')"
+expected="pre-down hook ran;
+post-down hook ran;"
+
+[ "$output" = "$expected" ] || fail "down hooks"
