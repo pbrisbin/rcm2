@@ -58,12 +58,12 @@ matches_pattern() {
   return 1
 }
 
-# Return true if base filename $1 matches any current exclusion
-# patterns.
-is_excluded() {
-  local file="$1" pattern
+# Returns true if match_pattern returns true for the given file and
+# any of the given patterns.
+matches_patterns() {
+  local file="$1" patterns="$2"
 
-  for pattern in $exclusion_patterns; do
+  for pattern in $patterns; do
     if matches_pattern "$file" "$pattern"; then
       debug "$file matches exclusion pattern $pattern"
       return 0
@@ -73,20 +73,8 @@ is_excluded() {
   return 1
 }
 
-# Return true if base filename $1 matches any current inclusion
-# patterns.
-is_included() {
-  local file="$1" pattern
-
-  for pattern in $inclusion_patterns; do
-    if matches_pattern "$file" "$pattern"; then
-      debug "$file matches inclusion pattern $pattern"
-      return 0
-    fi
-  done
-
-  return 1
-}
+is_excluded() { matches_patterns "$1" "$exclusion_patterns"; }
+is_included() { matches_patterns "$1" "$inclusion_patterns"; }
 
 # Return true if the base filename $1 and $2 have the same contents.
 same_file() {
@@ -154,6 +142,7 @@ sigil() {
 # Installs $1 into $2.
 install_dotfile() {
   local dotfile="$1" destination="$2"
+  local directory="$(dirname "$destination")"
 
   debug "installing $dotfile as $destination"
 
@@ -205,13 +194,11 @@ process_dotfiles() {
 
     dotfiles "$dotfiles"
 
-    if [ "$include_host" -eq 1 ]; then
-      host_dotfiles="$dotfiles/host-$hostname"
+    host_dotfiles="$dotfiles/host-$hostname"
 
-      if [ -d "$host_dotfiles" ]; then
-        debug "for host $hostname"
-        dotfiles "$host_dotfiles"
-      fi
+    if [ -d "$host_dotfiles" ]; then
+      debug "for host $hostname"
+      dotfiles "$host_dotfiles"
     fi
 
     for tag in $tags; do
@@ -228,7 +215,11 @@ process_dotfiles() {
 parse_options() {
   local opt file
 
+  debug "options: $*"
+
   while getopts Cd:t:I:x:qvFfikK opt; do
+    debug "option: $opt"
+
     case "$opt" in
       C) copy_all=1 ;;
       d) dotfiles_dirs="$dotfiles_dirs $OPTARG" ;;
@@ -240,8 +231,8 @@ parse_options() {
       F) show_flags=1 ;;
       f) force=1 ;;
       i) prompt=1 ;;
-      k) hooks=1 ;;
-      K) hooks=0 ;;
+      k) debug "k"; hooks=1 ;;
+      K) debug "K"; hooks=0 ;;
     esac
   done
   shift $(($OPTIND-1))
@@ -256,7 +247,6 @@ parse_options() {
   debug "exclusion_patterns: $exclusion_patterns"
   debug "force: $force"
   debug "hooks: $hooks"
-  debug "include_host: $include_host"
   debug "inclusion_patterns: $inclusion_patterns"
   debug "prompt: $prompt"
   debug "show_flags: $show_flags"
@@ -274,7 +264,6 @@ exclusion_patterns=''
 files=''
 force=0
 hooks=1
-include_host=1
 inclusion_patterns=''
 prompt=1
 show_flags=0
