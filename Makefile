@@ -6,6 +6,11 @@ URL     = https://github.com/$(AUTHOR)/$(NAME)
 
 PREFIX ?= /usr/local
 
+dist:
+	: "TODO..."
+	: "Replace ^version=.*$$ with version=$(VERSION)"
+	: "Produce ./pkg/$(NAME)-$(VERSION).tar.gz"
+
 install:
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	mkdir -p $(DESTDIR)$(PREFIX)/share/rcm
