@@ -3,7 +3,6 @@
 . "$RCM_LIB"/rcm.sh
 
 usage() { generic_usage '[-CVqvfhikK]'; }
-version() { generic_version; }
 
 process_dotfile() {
   local dotfile="$1"

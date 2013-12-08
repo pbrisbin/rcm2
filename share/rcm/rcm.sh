@@ -47,6 +47,8 @@ generic_usage() {
   printf "see %s(1) and rcm(5) for more details\n" "$subcommand"
 }
 
+usage() { generic_usage; }
+
 # Print version for subcommand $1.
 generic_version() {
   local subcommand="$(basename "$0")"
@@ -56,6 +58,8 @@ generic_version() {
   printf "License BSD: BSD 3-clause license\n\n"
   printf "Written by...\n"
 }
+
+version() { generic_version; }
 
 # Return true if string $1 is present in the space-separated "array" $2.
 in_array() { printf " $2 " | grep -Fq " $1 "; }

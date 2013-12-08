@@ -2,9 +2,6 @@
 : ${RCM_LIB:=$(dirname "$0")/../share/rcm}
 . "$RCM_LIB"/rcm.sh
 
-usage() { generic_usage; }
-version() { generic_version; }
-
 process_dotfile() {
   local dotfile="$1" sigil
 

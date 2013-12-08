@@ -3,7 +3,6 @@
 . "$RCM_LIB"/rcm.sh
 
 usage() { generic_usage '[-hvqo]' '[-t TAG] [-d DIR] FILES'; }
-version() { generic_version; }
 
 add_dotfile() {
   local file="$1"
