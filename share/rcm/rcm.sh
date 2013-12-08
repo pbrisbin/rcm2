@@ -114,20 +114,27 @@ skip() {
   return 1
 }
 
-# Print the installation location for base filename $1.
-destination() {
+# Print the path to base filename $1 relative to the current dotfiles
+# source.
+dotfile_path() {
   local dotfile="$PWD/$1"
 
   printf "$dotfile" | sed "
     s%$dotfiles/\?%%;
     s%\(host\|tag\)-[^/]*/%%;
-    s%^%$HOME/.%;
   "
 }
 
+# Print the installation location for base filename $1.
+destination() { printf "%s/.%s" "$HOME" "$(dotfile_path "$1")"; }
+
 # Return true if base filename $1 should be installed as a copy rather
 # than symlink.
-copy() { [ "$copy_all" -eq 1 ] || in_array "$1" "$copy_always"; }
+copy() {
+  local path="$(dotfile_path "$1")"
+
+  [ "$copy_all" -eq 1 ] || in_array "$path" "$copy_always"
+}
 
 # Installs $1 into $2.
 install_dotfile() {
