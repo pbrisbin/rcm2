@@ -186,6 +186,7 @@ dotfiles() {
 
   (
     cd "$directory"
+    run_hook 'pre-up'
 
     for file in ${files:-*}; do
       skip "$file" && continue
@@ -197,6 +198,7 @@ dotfiles() {
       fi
     done
 
+    run_hook 'post-up'
     cd - >/dev/null
   )
 }
@@ -211,8 +213,6 @@ process_dotfiles() {
     debug "for source $dotfiles"
 
     [ ! -d "$dotfiles" ] && continue
-
-    run_hook 'pre-up'
 
     dotfiles "$dotfiles"
 
@@ -231,8 +231,6 @@ process_dotfiles() {
         dotfiles "$tag_dotfiles"
       fi
     done
-
-    run_hook 'post-up'
   done
 }
 
