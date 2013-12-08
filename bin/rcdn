@@ -27,5 +27,4 @@ process_dotfile() {
   fi
 }
 
-set -- -v
 parse_options "$@" && process_dotfiles 'down'
