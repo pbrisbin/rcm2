@@ -4,15 +4,18 @@
 . $RCM_LIB/rcm.sh
 
 process_dotfile() {
-  local dotfile="$1"
-
-  printf "%s:%s/%s" "$(destination "$dotfile")" "$PWD" "$dotfile"
+  local dotfile="$1" sigil
 
   if [ "$show_flags" -eq 1 ]; then
-    printf "%s" "$(sigil "$dotfile")"
+    if copy "$dotfile"; then
+      sigil=":X"
+    else
+      sigil=":@"
+    fi
   fi
 
-  printf "\n"
+  printf "%s:%s/%s%s\n" \
+    "$(destination "$dotfile")" "$PWD" "$dotfile" "$sigil"
 }
 
 if parse_options "$@"; then

@@ -1,0 +1,10 @@
+# vim ft=sh
+copy 'foo' && fail "symlink is default"
+
+copy_always='foo bar'
+copy 'foo' || fail "copy for foo in copy_always"
+copy 'bar' || fail "copy for bar in copy_always"
+copy 'baz' && fail "link for baz not in copy_always"
+
+copy_all=1
+copy 'foo' || fail "copy when copy_all is 1"

@@ -132,20 +132,16 @@ destination() {
   "
 }
 
-# Print 'X' or '@' if base filename $1 should be installed as a copy or
-# symlink respectively.
-sigil() {
+# Return true if base filename $1 should be installed as a copy rather
+# than symlink.
+copy() {
   local file="$1"
 
-  if [ "$copy_all" -eq 1 ]; then
-    printf 'X'
-  else
-    if in_array "$file" "$copy_always"; then
-      printf 'X'
-    else
-      printf '@'
-    fi
-  fi
+  [ "$copy_all" -eq 1 ] && return 0
+
+  in_array "$file" "$copy_always" && return 0
+
+  return 1
 }
 
 # Installs $1 into $2.
@@ -157,10 +153,11 @@ install_dotfile() {
 
   [ -d "$directory" ] || _mkdir -p "$directory"
 
-  case "$(sigil "$dotfile")" in
-    '@') _ln -s "$dotfile" "$destination" ;;
-    'X') _cp "$dotfile" "$destination" ;;
-  esac
+  if copy "$dotfile"; then
+    _cp "$dotfile" "$destination"
+  else
+    _ln -s "$dotfile" "$destination"
+  fi
 }
 
 # Runs hooks/$1 if applicable
