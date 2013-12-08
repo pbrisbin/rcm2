@@ -1,54 +1,88 @@
 #!/bin/sh
-runnable() {
-  local test_file="$1"
-  local test_helper="$(dirname "$0")/helper"
-  local test_directory="/tmp/rcm-test.$$"
-  local src_directory="$(dirname "$0")/.."
-
-  [ -f "$test_helper" ] || test_helper=/dev/null
+generate() {
+  local test_case="$1" test_helper="$test_directory"/helper
 
   cat <<EOF
-ret=0
-
-export SRC_DIR="$src_directory"
-export TEST_DIR="$test_directory"
-
+#
+# Generated test case: $test_case, $(date)
+#
 fail() {
-  printf "  failure: %s\\n" "\$*"
+  printf "  \\${c_red}failure\\${c_reset}: %s\\n" "\$*"
   ret=1
 }
-
 pending() {
-  printf "  pending: %s\\n" "\$*"
+  printf "  \\${c_yellow}pending\\${c_reset}: %s\\n" "\$*"
   exit
 }
-
-$(cat "$test_helper")
-
+ret=0
+export SRC_DIR="$src_directory"
+export TEST_DIR="$test_work_directory"
 mkdir -p "\$TEST_DIR"
 cd "\$TEST_DIR"
+EOF
 
-$(cat "$test_file")
+  [ -r "$test_helper" ] && cat "$test_helper"
+  [ -r "$test_case"   ] && cat "$test_case"
 
+  cat <<EOF
 cd - >/dev/null
 rm -r "\$TEST_DIR"
 exit \$ret
 EOF
 }
 
-cases=0
-errors=0
+runner() {
+  local test_runner="$test_directory"/runner
 
-for test_case in "$(dirname "$0")"/cases/*; do
-  cases=$(($cases+1))
-
-  printf "Test case: %s...\n" "$test_case"
-
-  if ! runnable "$test_case" | sh; then
-    errors=$(($errors+1))
+  if [ -z "$test_runner" ]; then
+    "$test_runner"
+  else
+    /bin/sh
   fi
-done
+}
 
-printf "\nFailures: %s/%s\n" "$errors" "$cases"
+run_test_case() {
+  local test_case="$1"
 
-exit $errors
+  printf "Test case: %s.\n" "$test_case" | sed "s|$src_directory|.|"
+  generate "$test_case" | runner
+}
+
+output_results() {
+  local cases="$1" errors="$2"
+
+  printf -- "----------\n"
+
+  if [ "$errors" -eq 0 ]; then
+    printf "     ${c_green}PASS${c_reset}: %s/%s cases\n" "$cases" "$cases"
+  else
+    printf " ${c_red}FAILURES${c_reset}: %s/%s cases\n" "$errors" "$cases"
+  fi
+}
+
+main() {
+  local cases=0 errors=0 test_case
+
+  for test_case in "$test_directory"/cases/*; do
+    cases=$(($cases+1))
+
+    run_test_case "$test_case" || errors=$(($errors+1))
+  done
+
+  output_results "$cases" "$errors"
+
+  return $errors
+}
+
+src_directory="$PWD"
+test_directory="$src_directory/test"
+test_work_directory="/tmp/test.$$"
+
+c_red="\e[1;31m"
+c_green="\e[1;32m"
+c_yellow="\e[1;33m"
+c_reset="\e[0m"
+
+main
+
+exit $?
