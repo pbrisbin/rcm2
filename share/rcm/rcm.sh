@@ -202,7 +202,7 @@ dotfiles() {
 }
 
 # For each source, call dotfiles on it, then any host-specific sub
-# folder, then any tag-specific sub folders. TODO: run hooks.
+# folder, then any tag-specific sub folders.
 process_dotfiles() {
   local hostname="${HOST:-$(hostname)}"
   local dotfile host_dotfile tag_dotfile
