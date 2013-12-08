@@ -296,3 +296,6 @@ prompt=1
 show_flags=0
 tags=''
 verbosity=1
+
+: "${RCRC:=$HOME/.rcrc}"
+. "$RCRC"

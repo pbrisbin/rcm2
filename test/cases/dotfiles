@@ -11,13 +11,13 @@ process_dotfile() {
 }
 
 expected=""
-expected="${expected}pwd:/tmp/foo/bar/bat|file:file_3;"
-expected="${expected}pwd:/tmp/foo/bar|file:file_2;"
-expected="${expected}pwd:/tmp/foo/bar/quix|file:file_3;"
-expected="${expected}pwd:/tmp/foo/baz/bat|file:file_3;"
-expected="${expected}pwd:/tmp/foo/baz|file:file_2;"
-expected="${expected}pwd:/tmp/foo/baz/quix|file:file_3;"
-expected="${expected}pwd:/tmp/foo|file:file_1;"
+expected="${expected}pwd:$TEST_DIR/foo/bar/bat|file:file_3;"
+expected="${expected}pwd:$TEST_DIR/foo/bar|file:file_2;"
+expected="${expected}pwd:$TEST_DIR/foo/bar/quix|file:file_3;"
+expected="${expected}pwd:$TEST_DIR/foo/baz/bat|file:file_3;"
+expected="${expected}pwd:$TEST_DIR/foo/baz|file:file_2;"
+expected="${expected}pwd:$TEST_DIR/foo/baz/quix|file:file_3;"
+expected="${expected}pwd:$TEST_DIR/foo|file:file_1;"
 
 output="$(dotfiles 'foo')"
 
@@ -26,5 +26,3 @@ if [ "$output" != "$expected" ]; then
     expected: $expected
       actual: $output"
 fi
-
-rm -r foo

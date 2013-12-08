@@ -1,12 +1,17 @@
 #!/bin/sh
 runnable() {
   local test_file="$1"
-  rcm_lib="$(dirname "$0")/../share/rcm/rcm.sh"
+  local test_helper="$(dirname "$0")/helper"
+  local test_directory="/tmp/rcm-test.$$"
+  local src_directory="$(dirname "$0")/.."
+
+  [ -f "$test_helper" ] || test_helper=/dev/null
 
   cat <<EOF
-. "$rcm_lib"
-
 ret=0
+
+export SRC_DIR="$src_directory"
+export TEST_DIR="$test_directory"
 
 fail() {
   printf "  failure: %s\\n" "\$*"
@@ -18,8 +23,15 @@ pending() {
   exit
 }
 
-cd /tmp
+$(cat "$test_helper")
+
+mkdir -p "\$TEST_DIR"
+cd "\$TEST_DIR"
+
 $(cat "$test_file")
+
+cd - >/dev/null
+rm -r "\$TEST_DIR"
 exit \$ret
 EOF
 }

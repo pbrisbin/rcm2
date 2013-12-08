@@ -1,0 +1,3 @@
+# vim: ft=sh
+RCRC=/dev/null
+. "$SRC_DIR/share/rcm/rcm.sh"
