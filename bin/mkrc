@@ -3,8 +3,6 @@
 : ${RCM_LIB:="$(dirname "$0")"/../share/rcm}
 . $RCM_LIB/rcm.sh
 
-set -- -vv ~/.config/cabal
-
 parse_options "$@" || exit 1
 
 # For -d/-t, multiple arguments can be passed, we'll use the last
