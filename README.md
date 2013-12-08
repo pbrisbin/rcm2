@@ -20,6 +20,14 @@ To uninstall
 $ sudo make uninstall
 ```
 
+## Tests
+
+To run all tests:
+
+```
+$ ./test/run
+```
+
 ## User-visible Differences with rcm
 
 Assume these all end in "...yet"
