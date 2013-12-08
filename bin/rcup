@@ -13,7 +13,9 @@ process_dotfile() {
       debug "skipping $dotfile (exists and contents match)"
       return 0
     else
-      : # TODO: force/prompt
+      # TODO: force/prompt
+      debug "$dotfile exists and is different"
+      return 1
     fi
   fi
 
