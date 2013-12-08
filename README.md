@@ -35,7 +35,6 @@ Assume these all end in "...yet"
 * No usage message
 * No manpages
 * No Homebrew/Debian/Arch packaging
-* Subcommand `rcdn` is not implemented
 * When a dotfile exists, no prompting occurs
 
 ## Technical Differences with rcm

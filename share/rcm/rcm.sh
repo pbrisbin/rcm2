@@ -26,6 +26,7 @@ _cp()    { fs 'cp'    "$@"; }
 _ln()    { fs 'ln'    "$@"; }
 _mkdir() { fs 'mkdir' "$@"; }
 _mv()    { fs 'mv'    "$@"; }
+_rm()    { fs 'rm'    "$@"; }
 
 # Print $* on STDERR if verbosity is high enough.
 debug() {

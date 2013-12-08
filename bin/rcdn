@@ -1,0 +1,26 @@
+#!/bin/sh
+. "$(dirname "$0")"/../share/rcm/rcm.sh
+
+process_dotfile() {
+  local dotfile="$1"
+  local destination="$(destination "$dotfile")"
+  local potential="$destination"
+
+  while [ "$potential" != '/' ]; do
+    if [ -L "$potential" ]; then
+      _rm "$potential"
+      debug "removed $potential (symlink)"
+      return 0
+    fi
+
+    potential="$(dirname "$potential")"
+  done
+
+  if copy "$dotfile"; then
+    _rm "$destination"
+    debug "removed $potential (copy)"
+  fi
+}
+
+set -- -v
+parse_options "$@" && process_dotfiles 'down'
