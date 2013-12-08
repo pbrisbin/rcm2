@@ -20,20 +20,20 @@ To uninstall
 $ sudo make uninstall
 ```
 
-## Tests
+To run without installation
 
-To run all tests:
+```
+$ git clone ...
+$ ./bin/lsrc -h
+```
+
+## Tests
 
 ```
 $ ./test/run
 ```
 
-## User-visible Differences with rcm
-
-* No manpages
-* No Homebrew/Debian/Arch packaging
-
-## Technical Differences with rcm
+## Differences with rcm
 
 *A.K.A. why this might have value...*
 
@@ -113,4 +113,4 @@ Therefore, arguments to `-d`, `-t`, `-I`, and `-x` as well as `FILES`
 
 ### Build Process
 
-Installation is done via a simple ~20 line Makefile. No auto\* bloat.
+Installation is done via a simple Makefile. No auto\* bloat.
