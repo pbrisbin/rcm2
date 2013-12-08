@@ -163,14 +163,13 @@ install_dotfile() {
   esac
 }
 
-# Runs hooks/$1 if present and executable
+# Runs hooks/$1 if applicable
 run_hook() {
-  local hook="$1"
+  local hook="hooks/$1"
 
-  [ "$hooks" -ne 1 ] && return 0
-
-  if [ -x "$dotfiles/hooks/$hook" ]; then
-    "$dotfiles/hooks/$hook"
+  if [ "$hooks" -eq 1 -a -x "$hook" ]; then
+    debug "running hook $hook"
+    "$hook"
   fi
 }
 
