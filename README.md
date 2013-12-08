@@ -61,6 +61,11 @@ suitable implementation for that before calling into the main routine.
 This is just as DRY as `rcup` consuming `lsrc` output directly, but 
 frees us to make `lsrc` more human-readable in the future.
 
+This also means that handling the main source or the inner host-specific 
+and tag-specific sources is consistent automatically with regards to 
+exclusions and hooks -- for example, one can now define host-specific or 
+tag-specific hooks.
+
 ### Debug
 
 Debug output is consistent and readable. Verbosity 1 is the default and 
