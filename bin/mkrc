@@ -1,6 +1,11 @@
 #!/bin/sh
 . "$(dirname "$0")"/../share/rcm/rcm.sh
 
+usage() {
+  printf "Usage: mkrc [-hvqo] [-t TAG] [-d DIR] FILES ...\n"
+  printf "see mkrc(1) and rcm(5) for more details\n"
+}
+
 set_dotfiles_dir() {
   for dotfiles_dir in $dotfiles_dirs; do :; done
   for tag in $tags; do :; done
