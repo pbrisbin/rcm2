@@ -289,5 +289,4 @@ show_flags=0
 tags=''
 verbosity=1
 
-: "${RCRC:=$HOME/.rcrc}"
-. "$RCRC"
+. "${RCRC:-$HOME/.rcrc}"

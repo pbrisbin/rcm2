@@ -1,7 +1,5 @@
 #!/bin/sh
-
-: ${RCM_LIB:="$(dirname "$0")"/../share/rcm}
-. $RCM_LIB/rcm.sh
+. "$(dirname "$0")"/../share/rcm/rcm.sh
 
 process_dotfile() {
   local dotfile="$1"
