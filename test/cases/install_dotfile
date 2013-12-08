@@ -19,5 +19,3 @@ copy_all=1
 output="$(install_dotfile "dir/file" "foo/bar/.file")"
 expected='cp dir/file foo/bar/.file;'
 [ "$output" = "$expected" ] || fail "install when copying"
-
-rm -r foo

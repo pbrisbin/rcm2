@@ -27,5 +27,3 @@ output="$(process_dotfiles)"
 expected='bar;bar/host-a-host;bar/tag-a-tag1;bar/tag-a-tag2;baz;baz/host-a-host;baz/tag-a-tag1;baz/tag-a-tag2;'
 
 [ "$output" = "$expected" ] || fail "tag-a-tag{1,2} is found in bar and baz"
-
-rm -r {bar,baz,bat}

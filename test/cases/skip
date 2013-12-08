@@ -18,6 +18,3 @@ inclusion_patterns='included-p'
 
 skip excluded-p || fail "skip due to exclude pattern"
 skip included-p && fail "keep due to include pattern"
-
-rm {file,hooks,host-foo,tag-bar}
-rm {excluded,excluded-p,included-p}

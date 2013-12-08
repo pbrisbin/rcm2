@@ -14,5 +14,3 @@ output="$(run_hook 'pre-up')"
 hooks=0
 output="$(run_hook 'pre-up')"
 [ -z "$output" ] || fail "hooks disabled"
-
-rm -r foo
